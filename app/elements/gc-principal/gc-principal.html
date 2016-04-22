@@ -1,0 +1,174 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable-behavior.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-left-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+
+<link rel="import" href="gc-actualizar-contrasena.html">
+<link rel="import" href="gc-solicitar-contrasena.html">
+<link rel="import" href="gc-confirmar-contrasena.html">
+<link rel="import" href="gc-ajax.html">
+
+<dom-module id="gc-principal">
+  <style is="custom-style" include="iron-flex iron-flex-alignment iron-positioning"></style>
+  <template>
+      <neon-animated-pages class="fit" selected="[[selected]]">
+        <gc-actualizar-contrasena on-mostrar-solicitar-contrasena="mostrarSolicitarContrasena"
+        on-mostrar-confirmar-contrasena="mostrarConfirmarContrasena"
+        on-procesar-actualizar-contrasena="procesarActualizarContrasena"
+        encoded-captcha="{{encodedCaptcha.TextoBase64}}" on-refrescar-captcha="generarCaptcha"></gc-actualizar-contrasena>
+        <gc-solicitar-contrasena on-mostrar-actualizar-contrasena="mostrarActualizarContrasena"
+        on-mostrar-confirmar-contrasena="mostrarConfirmarContrasena"
+        on-procesar-solicitar-contrasena="procesarSolicitarContrasena"
+        encoded-captcha="{{encodedCaptcha}}" on-refrescar-captcha="generarCaptcha">></gc-solicitar-contrasena>
+        <gc-confirmar-contrasena on-mostrar-solicitar-contrasena="mostrarSolicitarContrasena"
+        on-mostrar-actualizar-contrasena="mostrarActualizarContrasena"
+        on-procesar-confirmar-contrasena="procesarConfirmarContrasena"
+        encoded-captcha="{{encodedCaptcha}}" on-refrescar-captcha="generarCaptcha">></gc-confirmar-contrasena>
+      </neon-animated-pages>
+      <paper-toast id="toast">
+        <span class="toast-hide-button" role="button" tabindex="0" on-tap:"hideToast">Ok</span>
+      </paper-toast>
+      <paper-dialog id="msgBox">
+        <h2>Error</h2>
+        <paper-dialog-scrollable>
+          <p id="msgText"></p>
+        </paper-dialog-scrollable>
+        <div class="buttons">
+          <paper-button dialog-confirm autofocus>Cerrar</paper-button>
+        </div>
+      </paper-dialog>
+      <gc-ajax id="ajaxActualizarContrasena"
+        api="{{api}}"
+        api-action="actualizarContrasena"
+        body="{{datosActualizarContrasena}}"
+        on-request-completed="handleActualizarContrasena"></gc-ajax>
+      <gc-ajax id="ajaxSolicitarContrasena"
+        api="{{api}}"
+        api-action="solicitarContrasena"
+        body="{{datosSolicitarContrasena}}"
+        on-request-completed="handleSolicitarContrasena"></gc-ajax>
+      <gc-ajax id="ajaxConfirmarContrasena"
+        api="{{api}}"
+        api-action="confirmarContrasena"
+        body="{{datosConfirmarContrasena}}"
+        on-request-completed="handleConfirmarContrasena"></gc-ajax>
+      <gc-ajax id="ajaxGenerarCaptcha"
+        api="{{api}}"
+        api-action="generarCaptcha"
+        body="{{datosGenerarCaptcha}}"
+        on-request-completed="handleGenerarCaptcha"
+        last-response={{encodedCaptcha}}
+        ></gc-ajax>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'gc-principal',
+      behaviors: [],
+      properties: {
+        api: { type:Object, value:function(){ return {}; } },
+        datosActualizarContrasena: { type:Object, value: function(){ return {}; } },
+        datosSolicitarContrasena: { type:Object, value: function(){ return {}; } },
+        datosConfirmarContrasena: { type:Object, value: function(){ return {}; } },
+        datosGenerar: { type:Object, value: function(){ return {}; } }
+      },
+      ready:function () {
+        //this.$.ajaxActualizarContrasena.auto=true;
+        console.log("ready");
+        console.log("api", this.api);
+        //var self=this;
+        //document.addEventListener('mostrar-solicitar-contrasena', function() {
+        //  console.log("vamos a mostrar gc-solicitar-contrasena")
+        //self.selected = 1;
+        //});
+        this.generarCaptcha();
+      },
+      mostrarSolicitarContrasena:function () {
+        this.selected=1;
+      },
+      mostrarActualizarContrasena:function(){
+        this.selected=0;
+      },
+      mostrarConfirmarContrasena:function(){
+        this.selected=2;
+      },
+      procesarSolicitarContrasena:function(data){
+        console.log("procesarSolicitar", data.detail);
+        this.generarCaptcha();
+      },
+      procesarActualizarContrasena:function(data){
+        console.log("procesarActualizarContrasena", data.detail);
+        console.log("api :", this.api);
+        this.datosActualizarContrasena= data.detail;
+        this.$.ajaxActualizarContrasena.execute();
+        this.generarCaptcha();
+      },
+      procesarConfirmarContrasena:function(data){
+        console.log("procesarConfirmar", data.detail);
+        this.generarCaptcha();
+      },
+      generarCaptcha:function(){
+        this.$.ajaxGenerarCaptcha.execute();
+      },
+      handleActualizarContrasena:function(data){
+        console.log("handleActualizar", arguments);
+        var rs = data.detail
+        console.log('response:', rs);
+        this.__mostrarOperacionFinalizada(rs);
+        this.generarCaptcha();
+      },
+      handleGenerarCaptcha:function(data){
+        //console.log("data", data);
+        //console.log("data.detail", data.detail);
+        console.log(" typeof data.detail.Response", typeof(data.detail.Response));
+
+        console.log("data.detail.Response", data.detail.Response);
+        //this.encodedCaptcha= data.detail.Response.TextoBase64;
+      },
+      /**
+      *
+      *@param(response:Object)
+      */
+      __mostrarOperacionFinalizada:function(response){
+        if(response.Status===200){
+          this.__mostrarOK(response);
+        }
+        else{
+          this.__mostrarError(response);
+        }
+      },
+
+      /**
+      *@param(response:Object)
+      */
+      __mostrarError:function(response){
+        this.$.msgText.textContent=response.StatusText;
+        this.$.msgBox.open();
+      },
+      /**
+      *@param(response:Object)
+      */
+      __mostrarOK:function(response){
+        //this.$.toast.text = 'Can\'t find: ' + window.location.href  + '. Redirected you to Home Page';
+        //this.$.toast.show();
+        this.$.msgText.textContent="Por favor revise su correo!";
+        this.$.msgBox.open();
+      }
+
+
+    });
+  </script>
+
+</dom-module>

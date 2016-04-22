@@ -1,0 +1,132 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-label/iron-label.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable-behavior.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-left-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+
+<dom-module id="gc-confirmar-contrasena">
+
+  <style include="iron-flex iron-flex-alignment iron-positioning">
+    :host {
+      display: block;
+      font-family: 'Roboto', sans-serif;
+    }
+    .container {
+      background: white;
+    }
+    .content {
+      padding: 20px;
+      margin: 0 auto;
+      max-width: 300px;
+    }
+    .center {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-justified);
+    }
+    .btn-aceptar{
+      margin: 20px 10px;
+      min-width: 250px;
+    }
+    .icon-aceptar{
+      margin: 0px 0px 0px 10px;
+    }
+    .olvide {
+       text-transform: none;
+       margin: 10px;
+       min-width: 250px;
+     }
+
+     .img-captcha{
+       width: 200px;
+       height: 50px;
+       padding:10px 0px 0px 0px;
+     }
+
+  </style>
+
+  <template>
+    <paper-header-panel class="flex layout vertical">
+      <paper-toolbar>
+        <div class="title flex">Confirmar Generación</div>
+      </paper-toolbar>
+      <div class="container">
+        <div class="content">
+          <paper-input name="Usuario" label="Usuario" required auto-validate id="usuario"></paper-input>
+          <paper-input name="Token" label="Código de Confirmación" required auto-validate id="token"></paper-input>
+          <div class="center">
+            <img class="img-captcha" src$="{{encodedCaptcha}}" on-tap="refrescarCaptcha"></img>
+          </div>
+          <paper-input name="Captcha" label="Digite el texto de la imagen" required auto-validate minlength="6" id="captcha"></paper-input>
+          <div class="center">
+            <paper-button raised class="btn-aceptar" on-tap="validar">Aceptar
+              <iron-icon icon="send" class="icon-aceptar"></iron-icon>
+            </paper-button>
+          </div>
+          <div class="center">
+            <paper-button on-tap="mostrarActualizarContrasena" class="olvide">Actualizar mi Contraseña</paper-button>
+          </div>
+          <div class="center">
+            <paper-button on-tap="mostrarSolicitarContrasena" class="olvide">Olvide mi Contraseña</paper-button>
+          </div>
+        </div>
+      </div>
+    </paper-header-panel>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'gc-confirmar-contrasena',
+      behaviors: [Polymer.NeonAnimatableBehavior],
+      properties: {
+        encodedCaptcha:{
+          type:String,
+          value:''
+        },
+        animationConfig: {
+          value: function() {
+            return {
+              'entry': {
+                name: 'slide-from-left-animation',
+                node: this
+              },
+              'exit': {
+                name: 'fade-out-animation',
+                node: this
+              }
+            }
+          }
+        }
+      },
+      mostrarActualizarContrasena: function() {
+        this.fire('mostrar-actualizar-contrasena');
+      },
+      mostrarSolicitarContrasena:function(){
+        this.fire('mostrar-solicitar-contrasena');
+      },
+      validar:function(){
+        console.log("vamos a validar");
+        if (this.$.usuario.validate() & this.$.captcha.validate()){
+          var data={
+            Usuario: this.$.usuario.value,
+            Captcha: this.$.captcha.value,
+            Token: this.$.token.value
+          };
+          this.fire('procesar-confirmar-contrasena', data);
+        }
+      },
+      refrescarCaptcha:function(){
+        this.fire('refrescar-captcha');
+      }
+    });
+  </script>
+</dom-module>

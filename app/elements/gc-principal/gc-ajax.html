@@ -1,0 +1,74 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="gc-ajax">
+  <template>
+    <iron-ajax id="ajax"
+      headers='{"Content-Type":"application/x-www-form-urlencoded"}'
+      method="{{method}}"
+      debounce-duration="{{debounceDuration}}"
+      body="{{body}}"
+      url="{{url}}"
+      handle-as="json"
+      on-response="handleResponse"
+      on-error="handleResponse"
+      last-response="{{lastResponse}}"></iron-ajax>
+  </template>
+  <script>
+    'use strict';
+    Polymer({
+      is: 'gc-ajax',
+      hostAttributes: {
+        hidden: true
+      },
+      behaviors: [],
+      properties: {
+        method:{type: String, value:'POST' },
+        debounceDuration: {type:Number, value:300},
+        api: { type:Object, value:function(){ return {}; } },
+        lastResponse: { type:Object, value:function(){ return {}; }, notify: true },
+        apiAction: {type: String, value:'' },
+        body: { type:Object, value: null },
+        url:{
+          computed: 'computeUrl(api,apiAction)'
+        }
+      },
+      ready:function () {
+        console.log("gc-ajax.ready");
+        console.log("gc-ajax.api", this.api);
+        console.log("gc-ajax.apiAction", this.apiAction);
+        console.log("gc-ajax.url", this.url);
+      },
+
+      execute:function(){
+        this.$.ajax.generateRequest();
+
+      },
+      computeUrl:function(api, apiAction){
+        console.log("gc-ajax api[apiAction]", api[apiAction]);
+        return  [ api.baseUrl, api[apiAction]].join('/');
+      },
+      handleResponse:function(){
+        /*
+        console.log("handleResponse lastResponse", this.$.ajax.lastResponse);
+        console.log("handleResponse lastError", this.$.ajax.lastError);
+        console.log("handleResponse lastRequest", this.$.ajax.lastRequest);
+        */
+        alert("handleResponse lastResponse :" + this.$.ajax.lastResponse);
+        alert("handleResponse lastError :"+ this.$.ajax.lastError);
+        alert("handleResponse lastRequest : "+  this.$.ajax.lastRequest);
+
+        var apn = Object.getOwnPropertyNames(this.$.ajax.lastRequest.response);
+        for(var n in apn){
+          alert( n +  ":" + apn[n]);
+        }
+
+        var rs = aicl.xhrToResponse(this.$.ajax.lastRequest);
+        console.log('response:', rs);
+        this.fire('request-completed', rs);
+      }
+    });
+  </script>
+
+</dom-module>
