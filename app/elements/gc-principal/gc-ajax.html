@@ -50,19 +50,20 @@
         return  [ api.baseUrl, api[apiAction]].join('/');
       },
       handleResponse:function(){
-        /*
+
+
         console.log("handleResponse lastResponse", this.$.ajax.lastResponse);
         console.log("handleResponse lastError", this.$.ajax.lastError);
         console.log("handleResponse lastRequest", this.$.ajax.lastRequest);
-        */
-        alert("handleResponse lastResponse :" + this.$.ajax.lastResponse);
+
+        /*alert("handleResponse lastResponse :" + this.$.ajax.lastResponse);
         alert("handleResponse lastError :"+ this.$.ajax.lastError);
         alert("handleResponse lastRequest : "+  this.$.ajax.lastRequest);
 
         var apn = Object.getOwnPropertyNames(this.$.ajax.lastRequest.response);
         for(var n in apn){
           alert( n +  ":" + apn[n]);
-        }
+        }*/
 
         var rs = aicl.xhrToResponse(this.$.ajax.lastRequest);
         console.log('response:', rs);

@@ -27,7 +27,7 @@
         <gc-actualizar-contrasena on-mostrar-solicitar-contrasena="mostrarSolicitarContrasena"
         on-mostrar-confirmar-contrasena="mostrarConfirmarContrasena"
         on-procesar-actualizar-contrasena="procesarActualizarContrasena"
-        encoded-captcha="{{encodedCaptcha.TextoBase64}}" on-refrescar-captcha="generarCaptcha"></gc-actualizar-contrasena>
+        encoded-captcha="{{encodedCaptcha}}" on-refrescar-captcha="generarCaptcha"></gc-actualizar-contrasena>
         <gc-solicitar-contrasena on-mostrar-actualizar-contrasena="mostrarActualizarContrasena"
         on-mostrar-confirmar-contrasena="mostrarConfirmarContrasena"
         on-procesar-solicitar-contrasena="procesarSolicitarContrasena"
@@ -68,9 +68,7 @@
         api="{{api}}"
         api-action="generarCaptcha"
         body="{{datosGenerarCaptcha}}"
-        on-request-completed="handleGenerarCaptcha"
-        last-response={{encodedCaptcha}}
-        ></gc-ajax>
+        on-request-completed="handleGenerarCaptcha"></gc-ajax>
   </template>
 
   <script>
@@ -130,12 +128,7 @@
         this.generarCaptcha();
       },
       handleGenerarCaptcha:function(data){
-        //console.log("data", data);
-        //console.log("data.detail", data.detail);
-        console.log(" typeof data.detail.Response", typeof(data.detail.Response));
-
-        console.log("data.detail.Response", data.detail.Response);
-        //this.encodedCaptcha= data.detail.Response.TextoBase64;
+        this.encodedCaptcha= data.detail.Response.TextoBase64;
       },
       /**
       *
