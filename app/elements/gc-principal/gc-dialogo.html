@@ -1,0 +1,70 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animatable-behavior.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-left-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+
+
+<dom-module id="gc-dialogo">
+  <style is="custom-style" include="iron-flex iron-flex-alignment iron-positioning">
+    .siError{
+      color:red;
+    }
+    .noError{
+      color:green;
+    }
+  </style>
+  <template>
+      <paper-dialog id="msgBox">
+        <iron-icon class$="[[_calcularClaseIcono(esError)]]" icon$="[[_calcularIcono(esError)]]"></iron-icon>
+        <paper-dialog-scrollable>
+          <p>[[mensaje]]</p>
+          <p>Estatus: [[response.Status]]</p>
+          <p>Texto: [[response.StatusText]] [[response.ResponseStatus.Message]] </p>
+          <p>URL: [[response.ResponseUrl]]</p>
+          <template is="dom-repeat" items="{{response.ResponseStatus.Errors}}">
+            <span>[[item.FieldName]] [[item.Message]]</span>
+         </template>
+
+        </paper-dialog-scrollable>
+        <div class="buttons">
+          <paper-button dialog-confirm autofocus>Cerrar</paper-button>
+        </div>
+      </paper-dialog>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'gc-dialogo',
+      behaviors: [],
+      properties: {
+        mensaje:{type:String, value:''},
+        esError:{type:Boolean, value:false},
+        response:{type:Object, value:function(){return {};}}
+      },
+      ready:function () {
+      },
+      open:function(){
+        this.$.msgBox.open();
+      },
+      _calcularClaseIcono:function(esError){
+        return esError? "siError":"noError";
+      },
+      _calcularIcono:function (esError) {
+        return esError? "thumb-down":"thumb-up";
+      }
+    });
+  </script>
+
+</dom-module>
