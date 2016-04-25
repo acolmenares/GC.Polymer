@@ -39,7 +39,7 @@
 
         </paper-dialog-scrollable>
         <div class="buttons">
-          <paper-button dialog-confirm autofocus>Cerrar</paper-button>
+          <paper-button dialog-confirm autofocus on-tap="_cerrar">Cerrar</paper-button>
         </div>
       </paper-dialog>
   </template>
@@ -63,6 +63,9 @@
       },
       _calcularIcono:function (esError) {
         return esError? "thumb-down":"thumb-up";
+      },
+      _cerrar:function(){
+        this.fire("cerrar-dialogo");
       }
     });
   </script>

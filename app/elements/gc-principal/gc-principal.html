@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
@@ -20,9 +21,11 @@
 <link rel="import" href="gc-confirmar-contrasena.html">
 <link rel="import" href="gc-dialogo.html">
 <link rel="import" href="gc-ajax.html">
+<link rel="import" href="simple-overlay.html">
 
 <dom-module id="gc-principal">
-  <style is="custom-style" include="iron-flex iron-flex-alignment iron-positioning"></style>
+  <style is="custom-style" include="iron-flex iron-flex-alignment iron-positioning">
+  </style>
   <template>
       <neon-animated-pages class="fit" selected="[[selected]]">
         <gc-actualizar-contrasena on-mostrar-solicitar-contrasena="mostrarSolicitarContrasena"
@@ -38,10 +41,9 @@
         on-procesar-confirmar-contrasena="procesarConfirmarContrasena"
         encoded-captcha="{{encodedCaptcha}}" on-refrescar-captcha="generarCaptcha">></gc-confirmar-contrasena>
       </neon-animated-pages>
-      <paper-toast id="toast">
-        <span class="toast-hide-button" role="button" tabindex="0" on-tap:"hideToast">Ok</span>
-      </paper-toast>
-      <gc-dialogo id="msgBox"></paper-dialog>
+      <simple-overlay id="backdrop" with-backdrop>
+      <paper-spinner active></paper-spinner></simple-overlay>
+      <gc-dialogo id="msgBox" on-cerrar-dialogo="_procesarCerrarDialogo"></gc-dialogo>
       <gc-ajax id="ajaxActualizarContrasena"
         api="{{api}}"
         api-action="actualizarContrasena"
@@ -88,42 +90,50 @@
         this.selected=2;
       },
       procesarActualizarContrasena:function(data){
-
         this.datosActualizarContrasena= data.detail;
         this.$.ajaxActualizarContrasena.execute();
+        this.$.backdrop.open();
       },
       procesarSolicitarContrasena:function(data){
         console.log("procesarSolicitar", data.detail);
         this.datosSolicitarContrasena=data.detail;
         this.$.ajaxSolicitarContrasena.execute();
-
+        this.$.backdrop.open();
       },
       procesarConfirmarContrasena:function(data){
         console.log("procesarConfirmar", data.detail);
         this.datosConfirmarContrasena=data.detail;
         this.$.ajaxConfirmarContrasena.execute();
-
+        this.$.backdrop.open();
       },
       generarCaptcha:function(){
         this.$.ajaxGenerarCaptcha.execute();
+        this.$.backdrop.open();
       },
       handleActualizarContrasena:function(data){
+        this.$.backdrop.close();
         var rs = data.detail
         this.__mostrarOperacionFinalizada(rs,"Contraseña Actualizada !");
-        this.generarCaptcha();
+
       },
       handleSolicitarContrasena:function(data){
+        this.$.backdrop.close();
         var rs = data.detail
         this.__mostrarOperacionFinalizada(rs,"Revise el Código de Confirmación en su correo");
-        this.generarCaptcha();
+
       },
       handleConfirmarContrasena:function(data){
+        this.$.backdrop.close();
         var rs = data.detail
         this.__mostrarOperacionFinalizada(rs,"Contraseña Generada. Revise su correo");
-        this.generarCaptcha();
+
       },
       handleGenerarCaptcha:function(data){
+        this.$.backdrop.close();
         this.encodedCaptcha= data.detail.Response.TextoBase64;
+      },
+      _procesarCerrarDialogo:function(){
+        this.generarCaptcha();
       },
       /**
       *
