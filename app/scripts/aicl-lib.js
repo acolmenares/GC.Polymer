@@ -140,7 +140,7 @@
 		var xhr= ironRequest.xhr;
 		var rs = {
 			Status:xhr.status,
-			StatusText:xhr.statusText,
+			StatusText:xhr.statusText||"Error !",
 			ResponseType:xhr.responseType,
 			ResponseUrl: xhr.responseURL || ironRequest.url,
 			Succeeded: ironRequest.succeeded

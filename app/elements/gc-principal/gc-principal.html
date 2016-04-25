@@ -18,6 +18,7 @@
 <link rel="import" href="gc-actualizar-contrasena.html">
 <link rel="import" href="gc-solicitar-contrasena.html">
 <link rel="import" href="gc-confirmar-contrasena.html">
+<link rel="import" href="gc-dialogo.html">
 <link rel="import" href="gc-ajax.html">
 
 <dom-module id="gc-principal">
@@ -40,15 +41,7 @@
       <paper-toast id="toast">
         <span class="toast-hide-button" role="button" tabindex="0" on-tap:"hideToast">Ok</span>
       </paper-toast>
-      <paper-dialog id="msgBox">
-        <h2>Error</h2>
-        <paper-dialog-scrollable>
-          <p id="msgText"></p>
-        </paper-dialog-scrollable>
-        <div class="buttons">
-          <paper-button dialog-confirm autofocus>Cerrar</paper-button>
-        </div>
-      </paper-dialog>
+      <gc-dialogo id="msgBox"></paper-dialog>
       <gc-ajax id="ajaxActualizarContrasena"
         api="{{api}}"
         api-action="actualizarContrasena"
@@ -147,7 +140,9 @@
       *@param(response:Object)
       */
       __mostrarError:function(response){
-        this.$.msgText.textContent=response.StatusText;
+        this.$.msgBox.mensaje="" ;//response.StatusText;
+        this.$.msgBox.response= response;
+        this.$.msgBox.esError=true;
         this.$.msgBox.open();
       },
       /**
@@ -156,7 +151,8 @@
       __mostrarOK:function(response){
         //this.$.toast.text = 'Can\'t find: ' + window.location.href  + '. Redirected you to Home Page';
         //this.$.toast.show();
-        this.$.msgText.textContent="Por favor revise su correo!";
+        this.$.msgBox.esError=false;
+        this.$.msgBox.mensaje="Por favor revise su correo!";
         this.$.msgBox.open();
       }
 
