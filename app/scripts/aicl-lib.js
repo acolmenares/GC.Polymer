@@ -136,35 +136,35 @@
 	* @param {IronRequestElement}
 	*/
 	window.aicl.xhrToResponse=function(ironRequest){
-		//alert("dentro de window.aicl.xhrToResponse 1");
+
 		var xhr= ironRequest.xhr;
 		var rs = {
 			Status:xhr.status,
 			StatusText:xhr.statusText||"Error !",
-			ResponseType:xhr.responseType,
+			ResponseType:xhr.responseType || xhr._responseType,
 			ResponseUrl: xhr.responseURL || ironRequest.url,
 			Succeeded: ironRequest.succeeded
 		};
-		/*
-		alert("dentro de window.aicl.xhrToResponse 2");
-		alert( xhr);
-		var apn = Object.getOwnPropertyNames(xhr);
-		for(var n in xhr){
-			alert( n +  ":" + xhr[n]);
-		}
-   */
-		rs.Response = (xhr.response && !xhr.response.ResponseStatus)? xhr.response:{};
-		//alert (xhr.response.ResponseStatus);
-		//alert("dentro de window.aicl.xhrToResponse 3");
 
-		//alert(typeof(data.detail.Response));
+		var responseTmp= xhr.response;
+		if( xhr._responseType==='json' && typeof(xhr.response)==='string'){
+			try{
+				responseTmp=JSON.parse(xhr.response);
+			}
+			catch(ex){
+			}
+		}
+		rs.Response = (responseTmp && !responseTmp.ResponseStatus)? responseTmp:{};
+/*
 		if (typeof(rs.Response)==='string'){
 			try {
 				rs.Response= JSON.parse(rs.Response);
 			}
-			catch(ex){}
+			catch(ex){
+			}
 		}
-		rs.ResponseStatus=  (xhr.response && xhr.response.ResponseStatus)? xhr.response.ResponseStatus:{};
+*/
+		rs.ResponseStatus=  (responseTmp && responseTmp.ResponseStatus)? responseTmp.ResponseStatus:{};
 		var apn = Object.getOwnPropertyNames(rs.ResponseStatus);
 		for(var pn in apn ){
 			if(apn[pn]==="Message"){
@@ -175,7 +175,7 @@
 				var st = rs.ResponseStatus.StackTrace ||'';
 				rs.ResponseStatus.StackTrace= st.substring(0,st.indexOf(':\n'));
 			}
-     }
+     }	 
 		return rs;
 	}
 

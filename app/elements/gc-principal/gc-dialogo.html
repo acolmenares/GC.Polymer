@@ -31,10 +31,10 @@
         <paper-dialog-scrollable>
           <p>[[mensaje]]</p>
           <p>Estatus: [[response.Status]]</p>
-          <p>Texto: [[response.StatusText]] [[response.ResponseStatus.Message]] </p>
+          <p>Texto: [[response.StatusText]]: [[response.ResponseStatus.Message]] </p>
           <p>URL: [[response.ResponseUrl]]</p>
           <template is="dom-repeat" items="{{response.ResponseStatus.Errors}}">
-            <span>[[item.FieldName]] [[item.Message]]</span>
+            <span>[[item.FieldName]]: [[item.Message]]</span>
          </template>
 
         </paper-dialog-scrollable>

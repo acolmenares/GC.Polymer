@@ -60,7 +60,7 @@
       </paper-toolbar>
       <div class="container">
         <div class="content">
-          <paper-input name="Usuario" label="Usuario" required auto-validate id="usuario"></paper-input>
+          <paper-input name="Correo" label="Correo Registrado" required auto-validate id="correo" type="email"></paper-input>
           <paper-input name="Token" label="Código de Confirmación" required auto-validate id="token"></paper-input>
           <div class="center">
             <img class="img-captcha" src$="{{encodedCaptcha}}" on-tap="refrescarCaptcha"></img>
@@ -114,9 +114,9 @@
       },
       validar:function(){
         console.log("vamos a validar");
-        if (this.$.usuario.validate() & this.$.captcha.validate()){
+        if (this.$.correo.validate() & this.$.captcha.validate() & this.$.token.validate()){
           var data={
-            Usuario: this.$.usuario.value,
+            Correo: this.$.correo.value,
             Captcha: this.$.captcha.value,
             Token: this.$.token.value
           };

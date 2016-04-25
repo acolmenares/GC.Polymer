@@ -76,14 +76,6 @@
         datosGenerar: { type:Object, value: function(){ return {}; } }
       },
       ready:function () {
-        //this.$.ajaxActualizarContrasena.auto=true;
-        console.log("ready");
-        console.log("api", this.api);
-        //var self=this;
-        //document.addEventListener('mostrar-solicitar-contrasena', function() {
-        //  console.log("vamos a mostrar gc-solicitar-contrasena")
-        //self.selected = 1;
-        //});
         this.generarCaptcha();
       },
       mostrarSolicitarContrasena:function () {
@@ -95,29 +87,39 @@
       mostrarConfirmarContrasena:function(){
         this.selected=2;
       },
-      procesarSolicitarContrasena:function(data){
-        console.log("procesarSolicitar", data.detail);
-        this.generarCaptcha();
-      },
       procesarActualizarContrasena:function(data){
-        console.log("procesarActualizarContrasena", data.detail);
-        console.log("api :", this.api);
+
         this.datosActualizarContrasena= data.detail;
         this.$.ajaxActualizarContrasena.execute();
-        this.generarCaptcha();
+      },
+      procesarSolicitarContrasena:function(data){
+        console.log("procesarSolicitar", data.detail);
+        this.datosSolicitarContrasena=data.detail;
+        this.$.ajaxSolicitarContrasena.execute();
+
       },
       procesarConfirmarContrasena:function(data){
         console.log("procesarConfirmar", data.detail);
-        this.generarCaptcha();
+        this.datosConfirmarContrasena=data.detail;
+        this.$.ajaxConfirmarContrasena.execute();
+
       },
       generarCaptcha:function(){
         this.$.ajaxGenerarCaptcha.execute();
       },
       handleActualizarContrasena:function(data){
-        console.log("handleActualizar", arguments);
         var rs = data.detail
-        console.log('response:', rs);
-        this.__mostrarOperacionFinalizada(rs);
+        this.__mostrarOperacionFinalizada(rs,"Contraseña Actualizada !");
+        this.generarCaptcha();
+      },
+      handleSolicitarContrasena:function(data){
+        var rs = data.detail
+        this.__mostrarOperacionFinalizada(rs,"Revise el Código de Confirmación en su correo");
+        this.generarCaptcha();
+      },
+      handleConfirmarContrasena:function(data){
+        var rs = data.detail
+        this.__mostrarOperacionFinalizada(rs,"Contraseña Generada. Revise su correo");
         this.generarCaptcha();
       },
       handleGenerarCaptcha:function(data){
@@ -127,9 +129,9 @@
       *
       *@param(response:Object)
       */
-      __mostrarOperacionFinalizada:function(response){
+      __mostrarOperacionFinalizada:function(response, msg){
         if(response.Status===200){
-          this.__mostrarOK(response);
+          this.__mostrarOK(response, msg);
         }
         else{
           this.__mostrarError(response);
@@ -140,19 +142,22 @@
       *@param(response:Object)
       */
       __mostrarError:function(response){
-        this.$.msgBox.mensaje="" ;//response.StatusText;
-        this.$.msgBox.response= response;
+        console.log("_mostarError response", response);
+        console.log("_mostarError ResponseStatus", response.ResponseStatus);
+        console.log("_mostarError errores", response.ResponseStatus.Errors);
         this.$.msgBox.esError=true;
+        this.$.msgBox.response= response;
+        this.$.msgBox.mensaje="" ;//response.StatusText;
         this.$.msgBox.open();
       },
       /**
       *@param(response:Object)
       */
-      __mostrarOK:function(response){
-        //this.$.toast.text = 'Can\'t find: ' + window.location.href  + '. Redirected you to Home Page';
-        //this.$.toast.show();
+      __mostrarOK:function(response, msg){
+
         this.$.msgBox.esError=false;
-        this.$.msgBox.mensaje="Por favor revise su correo!";
+        this.$.msgBox.response= response;
+        this.$.msgBox.mensaje=msg;
         this.$.msgBox.open();
       }
 

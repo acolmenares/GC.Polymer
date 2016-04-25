@@ -62,8 +62,10 @@
         <div class="content">
           <paper-input name="Usuario" label="Usuario" required auto-validate id="usuario"></paper-input>
           <paper-input name="ContrasenaActual" label="Contraseña Actual" required type="password" id="contrasenaActual"></paper-input>
-          <paper-input name="NuevaContrasena" label="Nueva Contraseña" required type="password" id="nuevaContrasena"></paper-input>
-          <paper-input name="ConfirmaNuevaContrasena" label="Confirme Nueva Contraseña" required type="password" id="nuevaContrasenaConfirmada"></paper-input>
+          <paper-input name="NuevaContrasena" label="Nueva Contraseña" required type="password" minlength="10"
+          id="nuevaContrasena"></paper-input>
+          <paper-input name="ConfirmaNuevaContrasena" label="Confirme Nueva Contraseña" required type="password"
+            minlength="10" id="nuevaContrasenaConfirmada"></paper-input>
           <div class="center">
             <img class="img-captcha" src$="{{encodedCaptcha}}" on-tap="refrescarCaptcha"></img>
           </div>
@@ -115,7 +117,6 @@
         this.fire('mostrar-confirmar-contrasena');
       },
       validar:function(){
-        console.log("vamos a validar para actualizar contrasena");
         if (this.$.usuario.validate()
         & this.$.captcha.validate()
         & this.$.contrasenaActual.validate() & this.$.nuevaContrasena.validate()
