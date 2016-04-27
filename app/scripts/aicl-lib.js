@@ -175,7 +175,7 @@
 				var st = rs.ResponseStatus.StackTrace ||'';
 				rs.ResponseStatus.StackTrace= st.substring(0,st.indexOf(':\n'));
 			}
-     }	 
+     }
 		return rs;
 	}
 
@@ -190,8 +190,12 @@
 		return a;
 	}
 
-
-
+	window.aicl.validatePasswordStrength=function(inputtxt){ 
+		var lowletters = /[a-z]/;
+		var upletters = /[A-Z]/;
+		var numbers = /[0-9]/;
+		return (inputtxt.match(lowletters) && inputtxt.match(upletters) && inputtxt.match(numbers) )
+  }
 
 // wrap document so it plays nice with other libraries
 // http://www.polymer-project.org/platform/shadow-dom.html#wrappers

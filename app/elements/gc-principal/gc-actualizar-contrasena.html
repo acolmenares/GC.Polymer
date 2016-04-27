@@ -62,10 +62,10 @@
         <div class="content">
           <paper-input name="Usuario" label="Usuario" required auto-validate id="usuario"></paper-input>
           <paper-input name="ContrasenaActual" label="Contraseña Actual" required type="password" id="contrasenaActual"></paper-input>
-          <paper-input name="NuevaContrasena" label="Nueva Contraseña" required type="password" minlength="10"
+          <paper-input name="NuevaContrasena" label="Nueva Contraseña" required type="password" minlength="8"
           id="nuevaContrasena"></paper-input>
           <paper-input name="ConfirmaNuevaContrasena" label="Confirme Nueva Contraseña" required type="password"
-            minlength="10" id="nuevaContrasenaConfirmada"></paper-input>
+            minlength="8" id="nuevaContrasenaConfirmada"></paper-input>
           <div class="center">
             <img class="img-captcha" src$="{{encodedCaptcha}}" on-tap="refrescarCaptcha"></img>
           </div>
@@ -119,20 +119,24 @@
       validar:function(){
         if (this.$.usuario.validate()
         & this.$.captcha.validate()
-        & this.$.contrasenaActual.validate() & this.$.nuevaContrasena.validate()
+        & this.$.contrasenaActual.validate()
+        & this.$.nuevaContrasena.validate()
         & this.$.nuevaContrasenaConfirmada.validate()){
-          if( this.$.contrasenaActual.value===this.$.nuevaContrasena.value){
-            this.$.nuevaContrasenaConfirmada.value="";
-            this.$.nuevaContrasenaConfirmada.invalid=true;
-            this.$.nuevaContrasena.focus();
-            this.$.nuevaContrasena.invalid=true;
-            this.$.nuevaContrasena.value="";
+          if( this.$.contrasenaActual.value===this.$.nuevaContrasena.value ){
+            console.log("this.$.contrasenaActual.value===this.$.nuevaContrasena.value ");
+            this._limpiarNueva();
             return;
           }
           if(this.$.nuevaContrasena.value!== this.$.nuevaContrasenaConfirmada.value){
+            console.console.log("this.$.nuevaContrasena.value!== this.$.nuevaContrasenaConfirmada.value");
             this.$.nuevaContrasenaConfirmada.invalid=true;
             this.$.nuevaContrasenaConfirmada.value="";
             this.$.nuevaContrasenaConfirmada.focus();
+            return;
+          }
+          if( !aicl.validatePasswordStrength(this.$.nuevaContrasena.value) ){
+            console.log(" !aicl.validatePasswordStrength(this.$.nuevaContrasena.value)");
+            this._limpiarNueva();
             return;
           }
           var data={
@@ -146,8 +150,15 @@
       },
       refrescarCaptcha:function(){
         this.fire('refrescar-captcha');
+      },
+      _limpiarNueva:function(){
+        this.$.nuevaContrasenaConfirmada.value="";
+        this.$.nuevaContrasenaConfirmada.invalid=true;
+        this.$.nuevaContrasena.focus();
+        this.$.nuevaContrasena.invalid=true;
+        this.$.nuevaContrasena.value="";
+        return;
       }
-
     });
   </script>
 
